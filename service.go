@@ -171,6 +171,18 @@ func (s *Service) ExpandSheet(sheet *Sheet, row, column uint) (err error) {
 	return
 }
 
+// InsertRows inserts rows into the sheet
+func (s *Service) InsertRows(sheet *Sheet, start, end int) (err error) {
+        sheet.Properties.GridProperties.RowCount -= uint(end - start)
+        sheet.newMaxRow -= uint(end - start)
+        r, err := newUpdateRequest(sheet.Spreadsheet)
+        if err != nil {
+                return
+        }
+        err = r.InsertDimension(sheet, "ROWS", start, end).Do()
+	return
+}
+
 // DeleteRows deletes rows from the sheet
 func (s *Service) DeleteRows(sheet *Sheet, start, end int) (err error) {
 	sheet.Properties.GridProperties.RowCount -= uint(end - start)

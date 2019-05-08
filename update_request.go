@@ -220,8 +220,19 @@ func (r *updateRequest) FindReplace() {
 
 }
 
-func (r *updateRequest) InsertDimension() {
-
+func (r *updateRequest) InsertDimension(sheet *Sheet, dimension string, start, end int) (ret *updateRequest) {
+	r.body["requests"] = append(r.body["requests"], map[string]interface{}{
+		"insertDimension": map[string]interface{}{
+			"range": map[string]interface{}{
+				"sheetId":    sheet.Properties.ID,
+				"dimension":  dimension,
+				"startIndex": start,
+				"endIndex":   end,
+			},
+			// "inheritFromBefore": false
+		},
+	})
+	return r
 }
 
 func (r *updateRequest) MoveDimension() {
