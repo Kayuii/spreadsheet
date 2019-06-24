@@ -2,11 +2,14 @@ package spreadsheet
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
+	"strings"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -22,6 +25,65 @@ const (
 	// SecretFileName is used to get client.
 	SecretFileName = "client_secret.json"
 )
+
+// NewServiceForCLI returns a gsheets client.
+// This function is intended for CLI tools.
+func NewServiceForCLI(ctx context.Context, authFile string) (s *Service, err error) {
+
+	cb, err := ioutil.ReadFile(authFile)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to read client secret file: %v", err)
+	}
+
+	config, err := google.ConfigFromJSON(cb, "https://www.googleapis.com/auth/spreadsheets")
+	if err != nil {
+		return nil, fmt.Errorf("Unable to parse client secret file to config: %v", err)
+	}
+
+	tokenFile := "token.json"
+	tb, err := ioutil.ReadFile(tokenFile)
+
+	var token string
+	if err == nil {
+		token = string(tb)
+	} else {
+		// if there are no token file, get from Web
+
+		authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
+		fmt.Printf("Go to the following link in your browser then type the "+
+			"authorization code: \n%v\n", authURL)
+
+		var authCode string
+		if _, err := fmt.Scan(&authCode); err != nil {
+			return nil, fmt.Errorf("Unable to read authorization code: %v", err)
+		}
+
+		tok, err := config.Exchange(oauth2.NoContext, authCode)
+		if err != nil {
+			return nil, fmt.Errorf("Unable to retrieve token from web: %v", err)
+		}
+
+		b := &bytes.Buffer{}
+		json.NewEncoder(b).Encode(tok)
+		token = b.String()
+
+		// save token
+		fmt.Printf("Saving credential file to: %s\n", tokenFile)
+		f, err := os.OpenFile(tokenFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
+		defer f.Close()
+		if err != nil {
+			return nil, fmt.Errorf("Unable to cache oauth token: %v", err)
+		}
+		fmt.Fprint(f, token)
+	}
+
+	tok := &oauth2.Token{}
+	if err := json.NewDecoder(strings.NewReader(token)).Decode(tok); err != nil {
+		return nil, fmt.Errorf("Unable to parse json to token: %v", err)
+	}
+	s = NewServiceWithClient(config.Client(ctx, tok))
+	return
+}
 
 // NewService makes a new service with the secret file.
 func NewService() (s *Service, err error) {
