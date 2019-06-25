@@ -193,6 +193,7 @@ func (s *Service) UpdateSpreadsheetTitle(spreadsheet *Spreadsheet, properties Pr
 	if err != nil {
 		return
 	}
+	err = s.ReloadSpreadsheet(spreadsheet)
 	return
 }
 
