@@ -205,7 +205,7 @@ func (r *updateRequest) AddFilterView() {
 
 }
 
-func (r *updateRequest) AppendCells(sheet *Sheet, rows *[][]Cell) *updateRequest {
+func (r *updateRequest) AppendCells(sheet *Sheet, rows [][]Cell) *updateRequest {
 
 	r.body["requests"] = append(r.body["requests"], map[string]interface{}{
 		"appendCells": map[string]interface{}{
