@@ -263,6 +263,16 @@ func (s *Service) ExpandSheet(sheet *Sheet, row, column uint) (err error) {
 	return
 }
 
+// AppendCells inserts rows into the sheet
+func (s *Service) AppendCells(sheet *Sheet) (err error) {
+	r, err := newUpdateRequest(sheet.Spreadsheet)
+	if err != nil {
+		return
+	}
+	err = r.AppendCells(sheet).Do()
+	return
+}
+
 // InsertRows inserts rows into the sheet
 func (s *Service) InsertRows(sheet *Sheet, start, end int) (err error) {
 	sheet.Properties.GridProperties.RowCount -= uint(end - start)

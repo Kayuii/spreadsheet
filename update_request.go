@@ -205,8 +205,16 @@ func (r *updateRequest) AddFilterView() {
 
 }
 
-func (r *updateRequest) AppendCells() {
+func (r *updateRequest) AppendCells(sheet *Sheet) *updateRequest {
 
+	r.body["requests"] = append(r.body["requests"], map[string]interface{}{
+		"appendCells": map[string]interface{}{
+			"sheetId": sheet.Properties.ID,
+			"rows":    sheet.Rows,
+			"fields":  "*", //strings.Join(fields, ","),
+		},
+	})
+	return r
 }
 
 func (r *updateRequest) ClearBasicFilter() {
