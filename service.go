@@ -24,6 +24,22 @@ const (
 
 	// SecretFileName is used to get client.
 	SecretFileName = "client_secret.json"
+
+	// DriveScope See, edit, create, and delete all of your Google Drive files
+	DriveScope = "https://www.googleapis.com/auth/drive"
+
+	// DriveFileScope View and manage Google Drive files and folders that you have opened
+	// or created with this app
+	DriveFileScope = "https://www.googleapis.com/auth/drive.file"
+
+	// DriveReadonlyScope See and download all your Google Drive files
+	DriveReadonlyScope = "https://www.googleapis.com/auth/drive.readonly"
+
+	// SpreadsheetsScope See, edit, create, and delete your spreadsheets in Google Drive
+	SpreadsheetsScope = "https://www.googleapis.com/auth/spreadsheets"
+
+	// SpreadsheetsReadonlyScope View your Google Spreadsheets
+	SpreadsheetsReadonlyScope = "https://www.googleapis.com/auth/spreadsheets.readonly"
 )
 
 // NewServiceForCLI returns a gsheets client.
@@ -35,7 +51,7 @@ func NewServiceForCLI(ctx context.Context, authFile string) (s *Service, err err
 		return nil, fmt.Errorf("Unable to read client secret file: %v", err)
 	}
 
-	config, err := google.ConfigFromJSON(cb, "https://www.googleapis.com/auth/spreadsheets")
+	config, err := google.ConfigFromJSON(cb, SpreadsheetsScope)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to parse client secret file to config: %v", err)
 	}
@@ -167,6 +183,19 @@ func (s *Service) ReloadSpreadsheet(spreadsheet *Spreadsheet) (err error) {
 	return
 }
 
+// UpdateSpreadsheetTitle update spreadsheet title
+func (s *Service) UpdateSpreadsheetTitle(spreadsheet *Spreadsheet, properties Properties) (err error) {
+	r, err := newUpdateRequest(spreadsheet)
+	if err != nil {
+		return
+	}
+	err = r.UpdateSpreadsheetProperties(&properties).Do()
+	if err != nil {
+		return
+	}
+	return
+}
+
 // AddSheet adds a sheet
 func (s *Service) AddSheet(spreadsheet *Spreadsheet, sheetProperties SheetProperties) (err error) {
 	r, err := newUpdateRequest(spreadsheet)
@@ -235,13 +264,13 @@ func (s *Service) ExpandSheet(sheet *Sheet, row, column uint) (err error) {
 
 // InsertRows inserts rows into the sheet
 func (s *Service) InsertRows(sheet *Sheet, start, end int) (err error) {
-        sheet.Properties.GridProperties.RowCount -= uint(end - start)
-        sheet.newMaxRow -= uint(end - start)
-        r, err := newUpdateRequest(sheet.Spreadsheet)
-        if err != nil {
-                return
-        }
-        err = r.InsertDimension(sheet, "ROWS", start, end).Do()
+	sheet.Properties.GridProperties.RowCount -= uint(end - start)
+	sheet.newMaxRow -= uint(end - start)
+	r, err := newUpdateRequest(sheet.Spreadsheet)
+	if err != nil {
+		return
+	}
+	err = r.InsertDimension(sheet, "ROWS", start, end).Do()
 	return
 }
 

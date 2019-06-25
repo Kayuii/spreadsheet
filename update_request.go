@@ -39,8 +39,36 @@ func (r *updateRequest) Do() (err error) {
 	return
 }
 
-func (r *updateRequest) UpdateSpreadsheetProperties() {
-
+func (r *updateRequest) UpdateSpreadsheetProperties(spreadsheetProperties *Properties) (ret *updateRequest) {
+	ret = r
+	params := map[string]interface{}{}
+	fields := []string{}
+	if spreadsheetProperties.Title != "" {
+		params["title"] = spreadsheetProperties.Title
+		fields = append(fields, "title")
+	}
+	if spreadsheetProperties.Locale != "" {
+		params["locale"] = spreadsheetProperties.Locale
+		fields = append(fields, "locale")
+	}
+	if spreadsheetProperties.AutoRecalc != "" {
+		params["autoRecalc"] = spreadsheetProperties.Locale
+		fields = append(fields, "autoRecalc")
+	}
+	if spreadsheetProperties.TimeZone != "" {
+		params["timezone"] = spreadsheetProperties.Locale
+		fields = append(fields, "timezone")
+	}
+	if len(fields) == 0 {
+		return
+	}
+	r.body["requests"] = append(r.body["requests"], map[string]interface{}{
+		"updateSpreadsheetProperties": map[string]interface{}{
+			"properties": params,
+			"fields":     strings.Join(fields, ","),
+		},
+	})
+	return
 }
 
 func (r *updateRequest) UpdateSheetProperties(sheet *Sheet, sheetProperties *SheetProperties) (ret *updateRequest) {

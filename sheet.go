@@ -105,6 +105,12 @@ func (sheet *Sheet) Update(row, column int, val string) {
 	sheet.modifiedCells = append(sheet.modifiedCells, &cell)
 }
 
+// InsertRows inserts rows into the sheet
+func (sheet *Sheet) InsertRows(start, end int) (err error) {
+	err = sheet.Spreadsheet.service.InsertRows(sheet, start, end)
+	return
+}
+
 // DeleteRows deletes rows from the sheet
 func (sheet *Sheet) DeleteRows(start, end int) (err error) {
 	err = sheet.Spreadsheet.service.DeleteRows(sheet, start, end)
