@@ -205,12 +205,12 @@ func (r *updateRequest) AddFilterView() {
 
 }
 
-func (r *updateRequest) AppendCells(sheet *Sheet) *updateRequest {
+func (r *updateRequest) AppendCells(sheet *Sheet, rows *[][]Cell) *updateRequest {
 
 	r.body["requests"] = append(r.body["requests"], map[string]interface{}{
 		"appendCells": map[string]interface{}{
 			"sheetId": sheet.Properties.ID,
-			"rows":    sheet.Rows,
+			"rows":    rows,
 			"fields":  "*", //strings.Join(fields, ","),
 		},
 	})

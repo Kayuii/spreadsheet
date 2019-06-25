@@ -264,12 +264,12 @@ func (s *Service) ExpandSheet(sheet *Sheet, row, column uint) (err error) {
 }
 
 // AppendCells inserts rows into the sheet
-func (s *Service) AppendCells(sheet *Sheet) (err error) {
+func (s *Service) AppendCells(sheet *Sheet, rows *[][]Cell) (err error) {
 	r, err := newUpdateRequest(sheet.Spreadsheet)
 	if err != nil {
 		return
 	}
-	err = r.AppendCells(sheet).Do()
+	err = r.AppendCells(sheet, rows).Do()
 	return
 }
 
