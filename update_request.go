@@ -211,12 +211,13 @@ func (r *updateRequest) AppendCells(sheet *Sheet, rows [][]Cell) *updateRequest 
 	// _rows := make([]interface{}, len(rows))
 	for k, v := range rows {
 
-		log.Printf("writing key: %v  value: %v", k, v)
+		log.Printf("kv key: %v  value: %v", k, v)
 
 		// _rows = append(_rows, )
 		// record := make()
 		for a, b := range v {
-			record = append(record, b.Value)
+			log.Printf("ab key: %v  value: %v", a, b)
+			// record = append(record, b.Value)
 		}
 
 	}
