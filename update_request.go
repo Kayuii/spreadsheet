@@ -215,9 +215,9 @@ func (r *updateRequest) AppendCells(sheet *Sheet, rows [][]Cell) *updateRequest 
 
 		// _rows = append(_rows, )
 		// record := make()
-		// for _, cell := range row {
-		// 	record = append(record, cell.Value)
-		// }
+		for a, b := range v {
+			record = append(record, b.Value)
+		}
 
 	}
 
