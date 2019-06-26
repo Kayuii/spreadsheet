@@ -3,6 +3,7 @@ package spreadsheet
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 )
 
@@ -205,13 +206,26 @@ func (r *updateRequest) AddFilterView() {
 
 }
 
-func (r *updateRequest) AppendCells(sheet *Sheet, rows RowData) *updateRequest {
+func (r *updateRequest) AppendCells(sheet *Sheet, rows [][]Cell) *updateRequest {
+
+	// _rows := make([]interface{}, len(rows))
+	for k, v := range rows {
+
+		log.Printf("writing key: %v  value: %v", k, v)
+
+		// _rows = append(_rows, )
+		// record := make()
+		// for _, cell := range row {
+		// 	record = append(record, cell.Value)
+		// }
+
+	}
 
 	r.body["requests"] = append(r.body["requests"], map[string]interface{}{
 		"appendCells": map[string]interface{}{
 			"sheetId": sheet.Properties.ID,
-			"rows":    rows,
-			"fields":  "*", //strings.Join(fields, ","),
+			// "rows":    rows,
+			"fields": "*", //strings.Join(fields, ","),
 		},
 	})
 	return r

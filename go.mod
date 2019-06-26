@@ -24,4 +24,5 @@ require (
 	google.golang.org/appengine v1.6.1 // indirect
 	google.golang.org/genproto v0.0.0-20190620144150-6af8c5fc6601 // indirect
 	google.golang.org/grpc v1.21.1 // indirect
+	gopkg.in/Iwark/spreadsheet.v2 v2.0.0-20190213044300-aa3ac0c59139
 )
