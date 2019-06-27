@@ -6,6 +6,7 @@ import "encoding/json"
 type Sheet struct {
 	Properties SheetProperties `json:"properties"`
 	Data       SheetData       `json:"data"`
+	TmpData    []byte          `json:"tmpdata"`
 	// Merges []*GridRange `json:"merges"`
 	// ConditionalFormats []*ConditionalFormatRule `json:"conditionalFormats"`
 	// FilterViews []*FilterView `json:"filterViews"`
@@ -58,7 +59,7 @@ func (sheet *Sheet) UnmarshalJSON(data []byte) error {
 		sheet.Rows[cell.Row][cell.Column] = cell
 		sheet.Columns[cell.Column][cell.Row] = cell
 	}
-
+	sheet.TmpData = data
 	sheet.modifiedCells = []*Cell{}
 	sheet.newMaxRow = sheet.Properties.GridProperties.RowCount
 	sheet.newMaxColumn = sheet.Properties.GridProperties.ColumnCount
